@@ -92,7 +92,9 @@ if st.button("処理開始"):
         upload_file_to_github(excel_path, repo_name, f"{excel_path}", commit_message, GITHUB_TOKEN)
 
         # 可視化アプリへのリンク
-        st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://share.streamlit.io/yudai4452/juggler-data-apps/juggler_data_visualizer.py)")
+        st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
+
 
 # 可視化アプリへのリンク
-st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://share.streamlit.io/yudai4452/juggler-data-apps/juggler_data_visualizer.py)")
+st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
+
