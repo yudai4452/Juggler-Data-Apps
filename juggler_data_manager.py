@@ -131,6 +131,18 @@ if st.sidebar.button("処理開始"):
     else:
         st.error("HTMLファイルをアップロードするか、HTMLを貼り付けてください。")
 
+st.markdown(
+    """
+    <div class="section-title">📊 メッセ武蔵境店 台データオンライン</div>
+    <div class="instruction">
+        台データはこちらのリンクからご確認ください： 
+        <a href="https://daidata.goraggio.com/100686" target="_blank" style="color: #3498DB; text-decoration: none;">メッセ武蔵境店 - 台データオンライン</a>
+    </div>
+    """, unsafe_allow_html=True
+)
+
+
+
 # 可視化アプリへのリンクを常に表示
 st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
 
