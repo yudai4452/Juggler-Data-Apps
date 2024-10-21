@@ -42,4 +42,4 @@ else:
     st.error(f"Excelファイル {excel_file_name} が存在しません。Juggler Data Managerで生成してください。")
 
 # データ処理アプリへのリンク
-st.markdown("[こちらをクリックしてJuggler Data Managerへ移動](https://share.streamlit.io/yudai4452/juggler-data-manager)")
+st.markdown("[こちらをクリックしてJuggler Data Managerへ移動](https://juggler-data-apps-gepdgbj565ctumtcunzyzh.streamlit.app/)")
