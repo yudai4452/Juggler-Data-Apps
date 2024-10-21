@@ -128,10 +128,9 @@ if st.sidebar.button("処理開始"):
 
         df_new = extract_data_and_save_to_csv(html_path, output_csv_path, date_input)
         st.success(f"データ処理が完了し、{excel_path} に保存されました。")
-
-        # 可視化アプリへのリンクを表示
-        st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
-
     else:
         st.error("HTMLファイルをアップロードするか、HTMLを貼り付けてください。")
+
+# 可視化アプリへのリンクを常に表示
+st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
 
