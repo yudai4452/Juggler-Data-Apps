@@ -58,18 +58,8 @@ def extract_data_and_save_to_csv(html_content, output_csv_path):
     df.to_csv(output_csv_path, index=False, encoding="shift-jis")
     return df
 
-def create_excel_if_not_exists(excel_path):
-    # ファイルが存在しない場合、新規作成
-    if not os.path.exists(excel_path):
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        ws.title = "Data"
-        ws.append(["台番号", "累計スタート", "BB回数", "RB回数", "ART回数", "最大持玉", "BB確率", "RB確率", "ART確率", "合成確率"])
-        wb.save(excel_path)
-
 # Excelファイルに色付け
 def apply_color_fill_to_excel(excel_path):
-    create_excel_if_not_exists(excel_path)
     wb = openpyxl.load_workbook(excel_path)
     ws = wb.active
     yellow_fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
