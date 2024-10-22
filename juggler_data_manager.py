@@ -78,6 +78,60 @@ def apply_color_fill_to_excel(excel_path):
 
     wb.save(excel_path)
 
+# CSVファイルから新しいExcelファイルを作成
+def create_new_excel_with_all_data(output_csv_dir, excel_path):
+    csv_files = [os.path.join(output_csv_dir, f) for f in os.listdir(output_csv_dir) if f.endswith('.csv')]
+    
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "合成確率"
+
+    ws.cell(row=1, column=1, value="台番号")
+    
+    all_data = {}
+    date_columns = []
+
+    for csv_file in csv_files:
+        df = pd.read_csv(csv_file, encoding="shift-jis")
+        date = os.path.basename(csv_file).split('_')[-1].replace('.csv', '')
+        formatted_date = pd.to_datetime(date).strftime('%Y/%m/%d')
+        date_columns.append(formatted_date)
+        
+        for index, row in df.iterrows():
+            if row['台番号'] not in all_data:
+                all_data[row['台番号']] = {}
+            all_data[row['台番号']][formatted_date] = row['合成確率']
+    
+    for col_index, date in enumerate(sorted(date_columns), start=2):
+        ws.cell(row=1, column=col_index, value=date)
+
+    for row_index, (machine_number, dates_data) in enumerate(all_data.items(), start=2):
+        ws.cell(row=row_index, column=1, value=machine_number)
+        for col_index, date in enumerate(sorted(date_columns), start=2):
+            ws.cell(row=row_index, column=col_index, value=dates_data.get(date, None))
+
+    for col in ws.columns:
+        max_length = 0
+        column = col[0].column_letter
+        for cell in col:
+            try:
+                if cell.value:
+                    max_length = max(max_length, len(str(cell.value)))
+            except:
+                pass
+        adjusted_width = max(max_length + 2, 10)
+        ws.column_dimensions[column].width = adjusted_width
+
+    for row in ws.iter_rows(min_row=1, max_row=ws.max_row):
+        ws.row_dimensions[row[0].row].height = 20
+
+    mei_font = Font(name="メイリオ")
+    for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
+        for cell in row:
+            cell.font = mei_font
+
+    wb.save(excel_path)
+
 # Streamlitアプリケーションのインターフェース
 st.title("🎰 Juggler Data Manager 🎰")
 st.write("このアプリでは、HTMLからデータを抽出し、Excelファイルに保存し、色付けします。")
@@ -102,11 +156,13 @@ if st.button("処理開始"):
         else:
             html_content = html_input
         
-        output_csv_path = os.path.join(".", f"slot_machine_data_{date_input}.csv")
+        output_csv_dir = "."
+        output_csv_path = os.path.join(output_csv_dir, f"slot_machine_data_{date_input}.csv")
         excel_path = "マイジャグラーV_塗りつぶし済み.xlsx"
         
         # データ処理とExcelファイル作成
         df_new = extract_data_and_save_to_csv(html_content, output_csv_path)
+        create_new_excel_with_all_data(output_csv_dir, excel_path)
         apply_color_fill_to_excel(excel_path)
 
         st.success(f"データ処理が完了し、{excel_path} に保存されました。")
@@ -123,6 +179,3 @@ if st.button("処理開始"):
 
         # 可視化アプリへのリンク
         st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
-
-# 可視化アプリへのリンク
-st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
