@@ -12,6 +12,16 @@ def load_excel_data(excel_path):
 def format_as_fraction(value):
     return f"1/{int(value)}" if value != 0 else "N/A"
 
+# 設定表をもとにしたY軸の目盛設定
+SETTINGS_PROBABILITIES = {
+    "1": 163.8,
+    "2": 159.1,
+    "3": 148.6,
+    "4": 135.4,
+    "5": 126.8,
+    "6": 114.6
+}
+
 # グラフのプロット
 def plot_synthetic_probabilities(df, selected_machine_number):
     machine_data = df.loc[selected_machine_number].dropna()
@@ -26,15 +36,20 @@ def plot_synthetic_probabilities(df, selected_machine_number):
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=dates, y=inverse_probabilities, mode='lines+markers', name=f'1/合成確率: {selected_machine_number}'))
+    
+    # 設定表をもとにY軸の目盛を設定
+    tickvals = [1/p for p in SETTINGS_PROBABILITIES.values()]
+    ticktext = [f"1/{int(p)}" for p in SETTINGS_PROBABILITIES.values()]
+
     fig.update_layout(
         title=f"台番号 {selected_machine_number} の1/合成確率の推移",
         xaxis_title="日付",
         yaxis_title="1/合成確率",
         xaxis=dict(tickformat="%Y-%m-%d"),
+        yaxis=dict(tickvals=tickvals, ticktext=ticktext),  # Y軸目盛設定
         hovermode="x"
     )
-    # Y軸のラベルを分数形式に変更
-    fig.update_yaxes(tickvals=inverse_probabilities, ticktext=fraction_labels)
+    
     st.plotly_chart(fig)
 
 # Streamlitアプリケーションのインターフェース
