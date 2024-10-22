@@ -58,26 +58,6 @@ def extract_data_and_save_to_csv(html_content, output_csv_path):
     df.to_csv(output_csv_path, index=False, encoding="shift-jis")
     return df
 
-# Excelファイルに色付け
-def apply_color_fill_to_excel(excel_path):
-    wb = openpyxl.load_workbook(excel_path)
-    ws = wb.active
-    yellow_fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
-    light_blue_fill = PatternFill(start_color="ADD8E6", end_color="ADD8E6", fill_type="solid")
-
-    for row in ws.iter_rows(min_row=2, min_col=2, max_row=ws.max_row, max_col=ws.max_column):
-        for cell in row:
-            try:
-                cell_value = float(cell.value)
-                if cell_value < 125:
-                    cell.fill = yellow_fill
-                elif 125 <= cell_value < 140:
-                    cell.fill = light_blue_fill
-            except (TypeError, ValueError):
-                pass
-
-    wb.save(excel_path)
-
 # CSVファイルから新しいExcelファイルを作成
 def create_new_excel_with_all_data(output_csv_dir, excel_path):
     csv_files = [os.path.join(output_csv_dir, f) for f in os.listdir(output_csv_dir) if f.endswith('.csv')]
@@ -132,6 +112,26 @@ def create_new_excel_with_all_data(output_csv_dir, excel_path):
 
     wb.save(excel_path)
 
+# Excelファイルに色付け
+def apply_color_fill_to_excel(excel_path):
+    wb = openpyxl.load_workbook(excel_path)
+    ws = wb.active
+    yellow_fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+    light_blue_fill = PatternFill(start_color="ADD8E6", end_color="ADD8E6", fill_type="solid")
+
+    for row in ws.iter_rows(min_row=2, min_col=2, max_row=ws.max_row, max_col=ws.max_column):
+        for cell in row:
+            try:
+                cell_value = float(cell.value)
+                if cell_value < 125:
+                    cell.fill = yellow_fill
+                elif 125 <= cell_value < 140:
+                    cell.fill = light_blue_fill
+            except (TypeError, ValueError):
+                pass
+
+    wb.save(excel_path)
+
 # Streamlitアプリケーションのインターフェース
 st.title("🎰 Juggler Data Manager 🎰")
 st.write("このアプリでは、HTMLからデータを抽出し、Excelファイルに保存し、色付けします。")
@@ -156,7 +156,10 @@ if st.button("処理開始"):
         else:
             html_content = html_input
         
-        output_csv_dir = "."
+        output_csv_dir = "./マイジャグラーV"
+        if not os.path.exists(output_csv_dir):
+            os.makedirs(output_csv_dir)
+
         output_csv_path = os.path.join(output_csv_dir, f"slot_machine_data_{date_input}.csv")
         excel_path = "マイジャグラーV_塗りつぶし済み.xlsx"
         
