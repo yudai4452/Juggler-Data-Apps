@@ -26,7 +26,7 @@ def plot_synthetic_probabilities(df, selected_machine_number):
     st.plotly_chart(fig)
 
 # Streamlitアプリケーションのインターフェース
-st.title("🎰 Juggler Data Visualizer")
+st.title("🎰 Juggler Data Visualizer 🎰")
 st.write("台番号ごとの合成確率を可視化します。")
 
 # Excelファイルの読み込み
