@@ -89,12 +89,11 @@ if st.button("処理開始"):
         # GitHubアップロード
         repo_name = "yudai4452/juggler-data-apps"
         commit_message = f"Add data for {date_input}"
-        upload_file_to_github(excel_path, repo_name, f"{excel_path}", commit_message, GITHUB_TOKEN)
+        upload_file_to_github(excel_path, repo_name, excel_path, commit_message, GITHUB_TOKEN)
+        upload_file_to_github(output_csv_path, repo_name, os.path.basename(output_csv_path), commit_message, GITHUB_TOKEN)
 
         # 可視化アプリへのリンク
         st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
 
-
 # 可視化アプリへのリンク
 st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
-
