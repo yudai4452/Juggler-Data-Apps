@@ -97,8 +97,8 @@ date_input = st.date_input("日付を選択", current_date_japan)
 # ファイルの処理開始ボタン
 if st.button("処理開始"):
     if html_content:
-        output_csv_path = os.path.join(".", f"マイジャグラーV/slot_machine_data_{date_input}.csv")
-        excel_path = "マイジャグラーV_塗りつぶし済み.xlsx"
+        output_csv_path = os.path.join("./Juggler-Data-Apps/マイジャグラーV", f"slot_machine_data_{date_input}.csv")
+        excel_path = "./マイジャグラーV/マイジャグラV_塗りつぶし済み.xlsx"
         
         # データ処理とExcelファイル作成
         df_new = extract_data_and_save_to_csv(html_content, output_csv_path)
@@ -109,8 +109,8 @@ if st.button("処理開始"):
         # GitHubアップロード
         repo_name = "yudai4452/juggler-data-apps"
         commit_message = f"Add data for {date_input}"
-        upload_file_to_github(excel_path, repo_name, excel_path, commit_message, GITHUB_TOKEN)
-        upload_file_to_github(output_csv_path, repo_name, os.path.basename(output_csv_path), commit_message, GITHUB_TOKEN)
+        upload_file_to_github(excel_path, repo_name, "マイジャグラーV/マイジャグラV_塗りつぶし済み.xlsx", commit_message, GITHUB_TOKEN)
+        upload_file_to_github(output_csv_path, repo_name, f"Juggler-Data-Apps/マイジャグラーV/{os.path.basename(output_csv_path)}", commit_message, GITHUB_TOKEN)
 
         # データのダウンロード機能
         st.download_button(
