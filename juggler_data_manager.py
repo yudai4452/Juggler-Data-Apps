@@ -30,13 +30,12 @@ def upload_file_to_github(file_path, repo_name, file_name_in_repo, commit_messag
         st.error(f"GitHubへのファイルアップロード中にエラーが発生しました: {e_outer}")
 
 # データ抽出と保存
-def extract_data_and_save_to_csv(html_content, output_csv_path, date):
-    # BeautifulSoupを使ってHTMLからデータを抽出する
+def extract_data_and_save_to_csv(html_content, output_csv_path):
     soup = BeautifulSoup(html_content, "lxml")
     rows = soup.find_all("tr")[1:]
 
     data = {
-        "台番号": [], "続繭スタート": [], "BB回数": [], "RB回数": [], 
+        "台番号": [], "累計スタート": [], "BB回数": [], "RB回数": [], 
         "ART回数": [], "最大持玉": [], "BB確率": [], "RB確率": [], 
         "ART確率": [], "合成確率": []
     }
@@ -45,7 +44,7 @@ def extract_data_and_save_to_csv(html_content, output_csv_path, date):
         cells = row.find_all("td")
         if len(cells) > 1:
             data["台番号"].append(cells[1].get_text())
-            data["続繭スタート"].append(cells[2].get_text())
+            data["累計スタート"].append(cells[2].get_text())
             data["BB回数"].append(cells[3].get_text())
             data["RB回数"].append(cells[4].get_text())
             data["ART回数"].append(cells[5].get_text())
@@ -80,8 +79,8 @@ def apply_color_fill_to_excel(excel_path):
     wb.save(excel_path)
 
 # Streamlitアプリケーションのインターフェース
-st.title("🍰 Juggler Data Manager 🍰")
-st.write("このアプでは、HTMLからデータを抽出し、Excelファイルに保存し、色付けします。")
+st.title("🎰 Juggler Data Manager 🎰")
+st.write("このアプリでは、HTMLからデータを抽出し、Excelファイルに保存し、色付けします。")
 
 # GitHubトークンの取得
 GITHUB_TOKEN = st.secrets["github"]["token"]
@@ -90,18 +89,24 @@ GITHUB_TOKEN = st.secrets["github"]["token"]
 japan_time_zone = pytz.timezone('Asia/Tokyo')
 current_date_japan = datetime.now(japan_time_zone)
 
-# HTML内容の直接貼り付け
-html_content_input = st.text_area("HTML内容を貼り付け、またはファイルをアップロード", height=200)
+# HTMLファイルのアップロードまたは貼り付け
+uploaded_html = st.file_uploader("HTMLファイルをアップロード", type=["html", "htm", "txt"])
+html_input = st.text_area("または、直接HTMLを貼り付け", "")
 date_input = st.date_input("日付を選択", current_date_japan)
 
 # ファイルの処理開始ボタン
 if st.button("処理開始"):
-    if html_content_input:
-        output_csv_path = os.path.join("マイジャグラーV", f"slot_machine_data_{date_input}.csv")
+    if uploaded_html or html_input:
+        if uploaded_html:
+            html_content = uploaded_html.getvalue().decode("utf-8")
+        else:
+            html_content = html_input
+        
+        output_csv_path = os.path.join(".", f"slot_machine_data_{date_input}.csv")
         excel_path = "マイジャグラーV_塗りつぶし済み.xlsx"
         
         # データ処理とExcelファイル作成
-        df_new = extract_data_and_save_to_csv(html_content_input, output_csv_path, date_input)
+        df_new = extract_data_and_save_to_csv(html_content, output_csv_path)
         apply_color_fill_to_excel(excel_path)
 
         st.success(f"データ処理が完了し、{excel_path} に保存されました。")
@@ -110,25 +115,11 @@ if st.button("処理開始"):
         repo_name = "yudai4452/juggler-data-apps"
         commit_message = f"Add data for {date_input}"
         upload_file_to_github(excel_path, repo_name, excel_path, commit_message, GITHUB_TOKEN)
-        upload_file_to_github(output_csv_path, repo_name, os.path.basename(output_csv_path), commit_message, GITHUB_TOKEN)
+        upload_file_to_github(output_csv_path, repo_name, f"マイジャグラーV/{os.path.basename(output_csv_path)}", commit_message, GITHUB_TOKEN)
 
-        # CSVファイルのダウンロードリンク
-        with open(output_csv_path, "rb") as csv_file:
-            st.download_button(
-                label="CSVファイルをダウンロード",
-                data=csv_file,
-                file_name=os.path.basename(output_csv_path),
-                mime="text/csv"
-            )
-
-        # Excelファイルのダウンロードリンク
-        with open(excel_path, "rb") as excel_file:
-            st.download_button(
-                label="Excelファイルをダウンロード",
-                data=excel_file,
-                file_name=excel_path,
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
+        # ダウンロードリンクの表示
+        st.download_button(label="CSVファイルをダウンロード", data=open(output_csv_path, 'rb').read(), file_name=f"slot_machine_data_{date_input}.csv")
+        st.download_button(label="Excelファイルをダウンロード", data=open(excel_path, 'rb').read(), file_name="マイジャグラーV_塗りつぶし済み.xlsx")
 
         # 可視化アプリへのリンク
         st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
