@@ -136,6 +136,9 @@ def apply_color_fill_to_excel(excel_path):
 st.title("🎰 Juggler Data Manager 🎰")
 st.write("このアプリでは、HTMLからデータを抽出し、Excelファイルに保存し、色付けします。")
 
+# データ取得用のリンク
+st.markdown("[台データオンライン メッセ武蔵境店](https://daidata.goraggio.com/100686)からデータを取得してください。")
+
 # GitHubトークンの取得
 GITHUB_TOKEN = st.secrets["github"]["token"]
 
