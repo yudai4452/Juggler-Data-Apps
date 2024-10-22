@@ -30,9 +30,35 @@ def upload_file_to_github(file_path, repo_name, file_name_in_repo, commit_messag
         st.error(f"GitHubへのファイルアップロード中にエラーが発生しました: {e_outer}")
 
 # データ抽出と保存
-def extract_data_and_save_to_csv(html_content, output_csv_path, date):
-    # ... (BeautifulSoupを使用したデータ抽出ロジック)
-    df = pd.DataFrame(data)  # データの例
+def extract_data_and_save_to_csv(html_path, output_csv_path, date):
+    # BeautifulSoupを使ってHTMLからデータを抽出する
+    with open(html_path, "r", encoding="utf-8") as file:
+        html_content = file.read()
+
+    soup = BeautifulSoup(html_content, "lxml")
+    rows = soup.find_all("tr")[1:]
+
+    data = {
+        "台番号": [], "累計スタート": [], "BB回数": [], "RB回数": [], 
+        "ART回数": [], "最大持玉": [], "BB確率": [], "RB確率": [], 
+        "ART確率": [], "合成確率": []
+    }
+
+    for row in rows:
+        cells = row.find_all("td")
+        if len(cells) > 1:
+            data["台番号"].append(cells[1].get_text())
+            data["累計スタート"].append(cells[2].get_text())
+            data["BB回数"].append(cells[3].get_text())
+            data["RB回数"].append(cells[4].get_text())
+            data["ART回数"].append(cells[5].get_text())
+            data["最大持玉"].append(cells[6].get_text())
+            data["BB確率"].append(cells[7].get_text())
+            data["RB確率"].append(cells[8].get_text())
+            data["ART確率"].append(cells[9].get_text())
+            data["合成確率"].append(cells[10].get_text())
+
+    df = pd.DataFrame(data)
     df.to_csv(output_csv_path, index=False, encoding="shift-jis")
     return df
 
