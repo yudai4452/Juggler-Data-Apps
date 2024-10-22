@@ -13,13 +13,16 @@ def plot_synthetic_probabilities(df, selected_machine_number):
     machine_data = df.loc[selected_machine_number].dropna()
     dates = machine_data.index
     probabilities = machine_data.values
+    
+    # 1/合成確率を計算
+    inverse_probabilities = 1 / probabilities
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=dates, y=probabilities, mode='lines+markers', name=f'合成確率: {selected_machine_number}'))
+    fig.add_trace(go.Scatter(x=dates, y=inverse_probabilities, mode='lines+markers', name=f'1/合成確率: {selected_machine_number}'))
     fig.update_layout(
-        title=f"台番号 {selected_machine_number} の合成確率の推移",
+        title=f"台番号 {selected_machine_number} の1/合成確率の推移",
         xaxis_title="日付",
-        yaxis_title="合成確率",
+        yaxis_title="1/合成確率",
         xaxis=dict(tickformat="%Y-%m-%d"),
         hovermode="x"
     )
@@ -27,7 +30,7 @@ def plot_synthetic_probabilities(df, selected_machine_number):
 
 # Streamlitアプリケーションのインターフェース
 st.title("🎰 Juggler Data Visualizer 🎰")
-st.write("台番号ごとの合成確率を可視化します。")
+st.write("台番号ごとの「1/合成確率」を可視化します。")
 
 # Excelファイルの読み込み
 excel_file_name = "マイジャグラーV_塗りつぶし済み.xlsx"
