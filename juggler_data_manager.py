@@ -115,7 +115,7 @@ if st.button("処理開始"):
             # 貼り付けられたHTMLテキストから処理
             html_content = html_text_input
         
-        output_csv_path = os.path.join(".", f"slot_machine_data_{date_input}.csv")
+        output_csv_path = os.path.join(".", f"マイジャグラーV/slot_machine_data_{date_input}.csv")
         excel_path = "マイジャグラーV_塗りつぶし済み.xlsx"
         
         # データ処理とExcelファイル作成
