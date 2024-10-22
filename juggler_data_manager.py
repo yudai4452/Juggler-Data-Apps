@@ -7,8 +7,6 @@ from datetime import datetime
 import streamlit as st
 from github import Github
 from io import StringIO
-from bs4 import BeautifulSoup
-import tempfile
 
 # GitHubへのファイルアップロード関数
 def upload_file_to_github(file_path, repo_name, file_name_in_repo, commit_message, GITHUB_TOKEN):
@@ -32,8 +30,11 @@ def upload_file_to_github(file_path, repo_name, file_name_in_repo, commit_messag
         st.error(f"GitHubへのファイルアップロード中にエラーが発生しました: {e_outer}")
 
 # データ抽出と保存
-def extract_data_and_save_to_csv(html_content, output_csv_path, date):
+def extract_data_and_save_to_csv(html_path, output_csv_path, date):
     # BeautifulSoupを使ってHTMLからデータを抽出する
+    with open(html_path, "r", encoding="utf-8") as file:
+        html_content = file.read()
+
     soup = BeautifulSoup(html_content, "lxml")
     rows = soup.find_all("tr")[1:]
 
@@ -60,7 +61,6 @@ def extract_data_and_save_to_csv(html_content, output_csv_path, date):
     df = pd.DataFrame(data)
     df.to_csv(output_csv_path, index=False, encoding="shift-jis")
     return df
-
 
 # Excelファイルに色付け
 def apply_color_fill_to_excel(excel_path):
@@ -104,12 +104,11 @@ date_input = st.date_input("日付を選択", current_date_japan)
 if st.button("処理開始"):
     if uploaded_html or html_text_input:
         if uploaded_html:
-            # 一時ファイルとして保存
-            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                tmp_file.write(uploaded_html.getbuffer())
-                html_path = tmp_file.name
-
-            # ファイルを読み込み
+            # アップロードされたファイルから処理
+            html_path = os.path.join(".", uploaded_html.name)
+            with open(html_path, "wb") as f:
+                f.write(uploaded_html.getbuffer())
+            
             with open(html_path, "r", encoding="utf-8") as f:
                 html_content = f.read()
         else:
