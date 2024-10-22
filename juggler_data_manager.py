@@ -97,7 +97,7 @@ date_input = st.date_input("日付を選択", current_date_japan)
 # ファイルの処理開始ボタン
 if st.button("処理開始"):
     if html_content:
-        output_csv_path = os.path.join(".", f"slot_machine_data_{date_input}.csv")
+        output_csv_path = os.path.join(".", f"マイジャグラV/slot_machine_data_{date_input}.csv")
         excel_path = "マイジャグラV_塗りつぶし済み.xlsx"
         
         # データ処理とExcelファイル作成
