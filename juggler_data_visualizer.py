@@ -42,7 +42,7 @@ def plot_synthetic_probabilities(df, selected_machine_number):
     ticktext = [f"1/{int(p)}" for p in SETTINGS_PROBABILITIES.values()]
 
     fig.update_layout(
-        title=f"台番号 {selected_machine_number} の1/合成確率の推移",
+        title=f"台番号 {selected_machine_number} の「1/合成確率」の推移",
         xaxis_title="日付",
         yaxis_title="1/合成確率",
         xaxis=dict(tickformat="%Y-%m-%d"),
