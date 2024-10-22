@@ -6,6 +6,7 @@ import pytz
 from datetime import datetime
 import streamlit as st
 from github import Github
+from io import StringIO
 
 # GitHubへのファイルアップロード関数
 def upload_file_to_github(file_path, repo_name, file_name_in_repo, commit_message, GITHUB_TOKEN):
@@ -29,7 +30,7 @@ def upload_file_to_github(file_path, repo_name, file_name_in_repo, commit_messag
         st.error(f"GitHubへのファイルアップロード中にエラーが発生しました: {e_outer}")
 
 # データ抽出と保存
-def extract_data_and_save_to_csv(html_path, output_csv_path, date):
+def extract_data_and_save_to_csv(html_content, output_csv_path, date):
     # ... (BeautifulSoupを使用したデータ抽出ロジック)
     df = pd.DataFrame(data)  # データの例
     df.to_csv(output_csv_path, index=False, encoding="shift-jis")
@@ -66,22 +67,33 @@ GITHUB_TOKEN = st.secrets["github"]["token"]
 japan_time_zone = pytz.timezone('Asia/Tokyo')
 current_date_japan = datetime.now(japan_time_zone)
 
-# HTMLファイルの入力
+# HTMLファイルのアップロードまたはHTMLテキストの貼り付け
 uploaded_html = st.file_uploader("HTMLファイルをアップロード", type=["html", "htm", "txt"])
+html_text_input = st.text_area("または、HTMLテキストをここに貼り付けてください")
+
+# 日付入力
 date_input = st.date_input("日付を選択", current_date_japan)
 
 # ファイルの処理開始ボタン
 if st.button("処理開始"):
-    if uploaded_html:
-        html_path = os.path.join(".", uploaded_html.name)
-        with open(html_path, "wb") as f:
-            f.write(uploaded_html.getbuffer())
+    if uploaded_html or html_text_input:
+        if uploaded_html:
+            # アップロードされたファイルから処理
+            html_path = os.path.join(".", uploaded_html.name)
+            with open(html_path, "wb") as f:
+                f.write(uploaded_html.getbuffer())
+            
+            with open(html_path, "r", encoding="utf-8") as f:
+                html_content = f.read()
+        else:
+            # 貼り付けられたHTMLテキストから処理
+            html_content = html_text_input
         
         output_csv_path = os.path.join(".", f"slot_machine_data_{date_input}.csv")
         excel_path = "マイジャグラーV_塗りつぶし済み.xlsx"
         
         # データ処理とExcelファイル作成
-        df_new = extract_data_and_save_to_csv(html_path, output_csv_path, date_input)
+        df_new = extract_data_and_save_to_csv(html_content, output_csv_path, date_input)
         apply_color_fill_to_excel(excel_path)
 
         st.success(f"データ処理が完了し、{excel_path} に保存されました。")
