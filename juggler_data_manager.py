@@ -185,3 +185,6 @@ if st.button("処理開始"):
 
         # 可視化アプリへのリンク
         st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
+
+# 可視化アプリへのリンク
+st.markdown("[こちらをクリックしてJuggler Data Visualizerへ移動](https://juggler-data-apps-6qz2wrn69bezyvzykh5bdb.streamlit.app/)")
