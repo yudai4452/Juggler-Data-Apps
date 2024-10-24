@@ -65,6 +65,15 @@ if os.path.exists(excel_file_name):
     
     if selected_machine_number:
         plot_synthetic_probabilities(df_synthetic, selected_machine_number)
+
+    # Excelファイルをダウンロードできるボタンを作成
+    with open(excel_file_name, "rb") as file:
+        btn = st.download_button(
+            label="📥 マイジャグラーV_塗りつぶし済み.xlsxをダウンロード",
+            data=file,
+            file_name=excel_file_name,
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
 else:
     st.error(f"Excelファイル {excel_file_name} が存在しません。Juggler Data Managerで生成してください。")
 
