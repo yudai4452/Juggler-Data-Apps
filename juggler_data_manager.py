@@ -73,6 +73,8 @@ def create_new_excel_with_all_data(output_csv_dir, excel_path):
 
     for csv_file in csv_files:
         df = pd.read_csv(csv_file, encoding="shift-jis")
+        # 台番号524, 525を除外
+        df = df[~df['台番号'].isin([524, 525])]
         date = os.path.basename(csv_file).split('_')[-1].replace('.csv', '')
         formatted_date = pd.to_datetime(date).strftime('%Y/%m/%d')
         date_columns.append(formatted_date)
